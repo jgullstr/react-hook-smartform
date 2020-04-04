@@ -7,3 +7,4 @@ export { default as Hidden } from './Hidden';
 export { default as Input } from './Input';
 export { default as useFieldArrayScope } from './useFieldArrayScope';
 export { default as useFormScope } from './useFormScope';
+export { default as withFieldArray } from './withFieldArray';
