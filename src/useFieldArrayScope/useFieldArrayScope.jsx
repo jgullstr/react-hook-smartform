@@ -1,7 +1,7 @@
 import React, { Fragment, useContext, useMemo } from 'react';
 import FieldArrayContext from '../FieldArrayContext';
 import FormScopeContext from '../FormScopeContext';
-import { FIELD_ARRAY_KEY_NAME } from '../FieldArray';
+import { FIELD_ARRAY_KEY_NAME } from '../FieldArray/FieldArray';
 
 const useFieldArrayScope = () => {
   const methods = useContext(FieldArrayContext);
