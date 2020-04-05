@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { useFieldArray } from 'react-hook-form';
 import FieldArrayContext from '../FieldArrayContext';
 import FormScope from '../FormScope';
@@ -14,8 +14,10 @@ const FieldArrayProvider = ({ flat, children }) => {
     keyName: FIELD_ARRAY_KEY_NAME,
   });
 
+  const context = useMemo(() => ({ ...methods, flat }), [methods, flat]);
+
   return (
-    <FieldArrayContext.Provider value={{ ...methods, flat }}>
+    <FieldArrayContext.Provider value={context}>
       {children}
     </FieldArrayContext.Provider>
   );
