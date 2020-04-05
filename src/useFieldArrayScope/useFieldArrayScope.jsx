@@ -13,7 +13,7 @@ const useFieldArrayScope = () => {
 
   // HACK: Resolve values for non-object fields.
   // @see https://github.com/react-hook-form/react-hook-form/issues/1344
-  fieldKeysRef.current = flat ? fields.map(({ [FIELD_ARRAY_KEY_NAME]: value }) => value) : fields;
+  fieldKeysRef.current = fields.map(({ [FIELD_ARRAY_KEY_NAME]: key }) => key);
   defaultValueRef.current = flat ? fields.map(({ value }) => value) : fields;
 
   return useMemo(() => {
