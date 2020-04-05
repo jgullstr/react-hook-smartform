@@ -6,7 +6,7 @@ import FormScopeContext from '../FormScopeContext';
 
 export const FIELD_ARRAY_KEY_NAME = Symbol('Array row identifier key');
 
-const FieldArrayProvider = ({ children }) => {
+const FieldArrayProvider = ({ flat, children }) => {
   const { name } = useContext(FormScopeContext);
 
   const methods = useFieldArray({
@@ -15,15 +15,15 @@ const FieldArrayProvider = ({ children }) => {
   });
 
   return (
-    <FieldArrayContext.Provider value={methods}>
+    <FieldArrayContext.Provider value={{ ...methods, flat }}>
       {children}
     </FieldArrayContext.Provider>
   );
 };
 
-const FieldArray = ({ name, children }) => (
+const FieldArray = ({ name, children, flat }) => (
   <FormScope name={name} type="array">
-    <FieldArrayProvider>
+    <FieldArrayProvider flat={flat}>
       {children}
     </FieldArrayProvider>
   </FormScope>
