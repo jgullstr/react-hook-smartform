@@ -1,4 +1,6 @@
-import React, { Fragment, useContext, useMemo, useRef } from 'react';
+import React, {
+  Fragment, useContext, useMemo, useRef,
+} from 'react';
 import FieldArrayContext from '../FieldArrayContext';
 import FormScopeContext from '../FormScopeContext';
 import { FIELD_ARRAY_KEY_NAME } from '../FieldArray/FieldArray';
