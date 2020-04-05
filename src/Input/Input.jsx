@@ -5,15 +5,13 @@ import useFormScope from '../useFormScope';
 const Input = ({
   rules,
   name: fieldName,
-  displayErrors,
+  displayErrors = true,
   errorClassName = 'error',
   ...props
 }) => {
   const { name, defaultValue, errors } = useFormScope(fieldName);
   const { register } = useFormContext();
-
-  const errorMessage = errors
-    && ((errors.errorMessage && errors.errorMessage.message) || errors.type);
+  const errorMessage = errors && (errors.message || errors.type);
 
   return (
     <Fragment>
@@ -21,7 +19,7 @@ const Input = ({
         {...props}
         name={name}
         ref={register(rules)}
-        defaultValue={defaultValue}
+        defaultValue={defaultValue || ''}
       />
       {displayErrors && errorMessage
         ? <span className={errorClassName}>{errorMessage}</span>
