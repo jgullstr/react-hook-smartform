@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useForm, FormContext } from 'react-hook-form';
 import FormScopeContext from '../FormScopeContext';
+import get from '../utils/get';
 
 const Form = ({
   onSubmit,
@@ -12,18 +13,27 @@ const Form = ({
   const methods = useForm(hookParams);
   const extendedOnSubmit = (value, e) => onSubmit(value, e, methods);
 
-  const { handleSubmit, reset, errors } = methods;
+  const {
+    handleSubmit, reset, errors, formState,
+  } = methods;
   const defaultValueRef = useRef();
-  const errorsRef = useRef();
-  errorsRef.current = errors;
   defaultValueRef.current = defaultValue;
+
+  const getMetaDataRef = useRef();
+  getMetaDataRef.current = path => ({
+    errors: get(errors, path),
+    dirty: formState.dirtyFields.has(path),
+    touched: get(formState.touched, path, false),
+  });
 
   useEffect(() => {
     reset(defaultValue);
   }, [defaultValue, reset]);
 
-
-  const scope = useMemo(() => ({ defaultValueRef, errorsRef }), []);
+  const scope = useMemo(() => ({
+    defaultValueRef,
+    getMetaData: path => getMetaDataRef.current(path),
+  }), []);
 
   return (
     <FormContext {...methods}>

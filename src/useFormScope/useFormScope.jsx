@@ -8,11 +8,10 @@ const useFormScope = (fieldName, type = 'object') => {
     name: parentName,
     defaultValueRef: parentDefaultValueRef,
     type: parentType,
-    errorsRef: parentErrorsRef,
+    getMetaData,
   } = useContext(FormScopeContext);
 
   const defaultValueRef = useRef();
-  const errorsRef = useRef();
 
   const getScopedName = () => {
     switch (parentType) {
@@ -26,26 +25,24 @@ const useFormScope = (fieldName, type = 'object') => {
   };
 
   const name = parentName ? getScopedName() : fieldName;
-  const errors = (parentErrorsRef.current || {})[fieldName];
-  errorsRef.current = errors;
   const defaultValue = (parentDefaultValueRef.current || {})[fieldName];
   defaultValueRef.current = defaultValue;
 
   const FormScopeProvider = useCallback(({ children }) => (
     <FormScopeContext.Provider
       value={{
-        name, defaultValueRef, errorsRef, type,
+        name, defaultValueRef, type, getMetaData,
       }}
     >
       { children }
     </FormScopeContext.Provider>
-  ), [name, type]);
+  ), [name, type, getMetaData]);
 
   return {
     name,
-    errors,
     defaultValue,
     FormScopeProvider,
+    ...getMetaData(name),
   };
 };
 

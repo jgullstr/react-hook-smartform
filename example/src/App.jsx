@@ -1,10 +1,29 @@
 import React, { useState } from 'react';
 
 import {
-  Form, Input, FormScope, useFieldArrayScope, FieldArray,
+  Form, Input, FormScope, useFieldArrayScope, withFieldArray,
 } from 'react-hook-smartform';
 
-const Addresses = () => {
+const Names = withFieldArray(() => {
+  const { renderFields, append, remove } = useFieldArrayScope();
+
+  return (
+    <div>
+      Names:
+      {renderFields(index => (
+        <div>
+          <Input name={index} rules={{ required: 'NEAAAMEE!' }} />
+          <button type="button" onClick={() => remove(index)}>
+            Remove
+          </button>
+        </div>
+      ))}
+      <button type="button" onClick={() => append('')}>Add row</button>
+    </div>
+  );
+});
+
+const Addresses = withFieldArray(() => {
   const { renderFields, append, remove } = useFieldArrayScope();
 
   return (
@@ -20,7 +39,11 @@ const Addresses = () => {
             </div>
             <div>
               City:
-              <Input name="city" />
+              <Input name="city" rules={{ required: 'CITY REQUIRED' }} />
+            </div>
+            <div>
+              Names:
+              <Names name="names" flat />
             </div>
             <button type="button" onClick={() => remove(index)}>
               Remove
@@ -31,7 +54,7 @@ const Addresses = () => {
       <button type="button" onClick={() => append()}>Add row</button>
     </div>
   );
-};
+});
 
 const App = () => {
   const [value, setValue] = useState();
@@ -47,15 +70,12 @@ const App = () => {
           Last name:
           <Input type="text" name="lastName" />
         </div>
-        <FormScope name="address">
-          <div>
-            Addresses:
-            <FieldArray name="addresses">
-              <Addresses />
-            </FieldArray>
-          </div>
-
-        </FormScope>
+        <div>
+          Addresses:
+          <FormScope name="ards">
+            <Addresses name="addresses" />
+          </FormScope>
+        </div>
         <input type="submit" value="Submit" />
       </Form>
       Submitted value:
