@@ -1,23 +1,32 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useFieldArray } from 'react-hook-form';
 import FieldArrayContext from '../FieldArrayContext';
 import FormScope from '../FormScope';
+import FormScopeContext from '../FormScopeContext';
 
-export const FIELD_ARRAY_KEY_NAME = 'rowKey';
+export const FIELD_ARRAY_KEY_NAME = Symbol('Array row identifier key');
 
-const FieldArray = ({ name, children }) => {
+const FieldArrayProvider = ({ children }) => {
+  const { name } = useContext(FormScopeContext);
+
   const methods = useFieldArray({
     name,
     keyName: FIELD_ARRAY_KEY_NAME,
   });
 
   return (
-    <FormScope name={name} type="array">
-      <FieldArrayContext.Provider value={methods}>
-        {children}
-      </FieldArrayContext.Provider>
-    </FormScope>
+    <FieldArrayContext.Provider value={methods}>
+      {children}
+    </FieldArrayContext.Provider>
   );
 };
+
+const FieldArray = ({ name, children }) => (
+  <FormScope name={name} type="array">
+    <FieldArrayProvider>
+      {children}
+    </FieldArrayProvider>
+  </FormScope>
+);
 
 export default FieldArray;
