@@ -20,11 +20,15 @@ const FieldArrayProvider = ({ flat, children }) => {
   const { fields } = methods;
 
   const arrayContext = useMemo(() => {
-    const renderFields = fn => fields.map(({ [KEY_NAME]: key }, index) => (
-      <Fragment key={key}>
-        {fn(index)}
-      </Fragment>
-    ));
+    const renderFields = fn => {
+      const lastIndex = fields.length - 1;
+
+      return fields.map(({ [KEY_NAME]: key }, index) => (
+        <Fragment key={key}>
+          {fn(index, lastIndex)}
+        </Fragment>
+      ));
+    };
 
     return { ...methods, renderFields };
   }, [methods, fields]);
