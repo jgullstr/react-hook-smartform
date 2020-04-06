@@ -21,9 +21,8 @@ const FormScope = ({ name, children, type }) => {
 
   const context = useMemo(() => {
     const path = getPath(name, type);
-
     return {
-      defaultValue,
+      defaultValue: (defaultValue || {})[name],
       type,
       getMetaData,
       getPath: getScopedPath(path, type),

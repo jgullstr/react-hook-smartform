@@ -36,7 +36,6 @@ const Form = ({
   const context = useMemo(() => ({
     defaultValue,
     ...rootScope,
-    path: '',
   }), [defaultValue, rootScope]);
 
   return (
