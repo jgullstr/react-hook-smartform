@@ -1,48 +1,19 @@
-import React, {
-  useContext, useRef, useCallback,
-} from 'react';
+import { useContext } from 'react';
 import FormScopeContext from '../FormScopeContext';
 
-const useFormScope = (fieldName, type = 'object') => {
+const useFormScope = name => {
   const {
-    name: parentName,
-    defaultValueRef: parentDefaultValueRef,
-    type: parentType,
+    defaultValue: parentDefaultValue,
     getMetaData,
+    getPath,
   } = useContext(FormScopeContext);
 
-  const defaultValueRef = useRef();
-
-  const getScopedName = () => {
-    switch (parentType) {
-      case 'object':
-        return `${parentName}.${fieldName}`;
-      case 'array':
-        return `${parentName}[${fieldName}]`;
-      default:
-        throw new TypeError(`Unknown composed field type: ${parentType}`);
-    }
-  };
-
-  const name = parentName ? getScopedName() : fieldName;
-  const defaultValue = (parentDefaultValueRef.current || {})[fieldName];
-  defaultValueRef.current = defaultValue;
-
-  const FormScopeProvider = useCallback(({ children }) => (
-    <FormScopeContext.Provider
-      value={{
-        name, defaultValueRef, type, getMetaData,
-      }}
-    >
-      { children }
-    </FormScopeContext.Provider>
-  ), [name, type, getMetaData]);
+  const path = getPath(name);
 
   return {
-    name,
-    defaultValue,
-    FormScopeProvider,
-    ...getMetaData(name),
+    name: path,
+    defaultValue: (parentDefaultValue || {})[name],
+    ...getMetaData(path),
   };
 };
 

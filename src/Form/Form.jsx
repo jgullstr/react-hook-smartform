@@ -16,8 +16,6 @@ const Form = ({
   const {
     handleSubmit, reset, errors, formState,
   } = methods;
-  const defaultValueRef = useRef();
-  defaultValueRef.current = defaultValue;
 
   const getMetaDataRef = useRef();
   getMetaDataRef.current = path => ({
@@ -30,14 +28,20 @@ const Form = ({
     reset(defaultValue);
   }, [defaultValue, reset]);
 
-  const scope = useMemo(() => ({
-    defaultValueRef,
+  const rootScope = useMemo(() => ({
     getMetaData: path => getMetaDataRef.current(path),
+    getPath: x => x,
   }), []);
+
+  const context = useMemo(() => ({
+    defaultValue,
+    ...rootScope,
+    path: '',
+  }), [defaultValue, rootScope]);
 
   return (
     <FormContext {...methods}>
-      <FormScopeContext.Provider value={scope}>
+      <FormScopeContext.Provider value={context}>
         <form onSubmit={handleSubmit(extendedOnSubmit)} className={className}>
           { children }
         </form>

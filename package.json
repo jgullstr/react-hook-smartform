@@ -1,7 +1,7 @@
 {
   "name": "react-hook-smartform",
   "version": "1.0.0",
-  "description": "Tiny abstraction layer to simplify working with react-form-hook",
+  "description": "Tiny abstraction layer to simplify working with react-hook-form",
   "author": "jgullstr",
   "license": "MIT",
   "repository": "jgullstr/react-hook-smartform",
