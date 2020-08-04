@@ -50,8 +50,5 @@
   },
   "files": [
     "dist"
-  ],
-  "dependencies": {
-    "react-hook-form": "^5.7.2"
-  }
+  ]
 }
