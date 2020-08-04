@@ -1,7 +1,7 @@
 import React, {
   useEffect, useMemo, useRef, useCallback,
 } from 'react';
-import { useForm, FormContext } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import FormScopeContext from '../FormScopeContext';
 import get from '../utils/get';
 
@@ -26,7 +26,7 @@ const useSmartForm = ({ autoReset, defaultValues, ...params }) => {
   const getMetaDataRef = useRef();
   getMetaDataRef.current = path => ({
     errors: get(errors, path),
-    dirty: formState.dirtyFields.has(path),
+    isDirty: get(formState.dirtyFields, path),
     touched: get(formState.touched, path, false),
   });
 
@@ -41,13 +41,13 @@ const useSmartForm = ({ autoReset, defaultValues, ...params }) => {
   }), [defaultValues, rootScope]);
 
   const Form = useCallback(({ children, ...props }) => (
-    <FormContext {...methodsRef.current}>
+    <FormProvider {...methodsRef.current}>
       <FormScopeContext.Provider value={context}>
         <form {...props}>
           { children }
         </form>
       </FormScopeContext.Provider>
-    </FormContext>
+    </FormProvider>
   ), [context]);
 
   return useMemo(
