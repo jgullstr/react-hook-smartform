@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import {
   Form, Input, FormScope, useFieldArrayScope, withFieldArray,
 } from 'react-hook-smartform';
+import ControlledInput from './ControlledInput';
 
 const Names = withFieldArray(() => {
   const { renderFields, append, remove } = useFieldArrayScope();
@@ -61,10 +62,14 @@ const App = () => {
 
   return (
     <div>
-      <Form onSubmit={setValue}>
+      <Form onSubmit={setValue} hookProps={{ reValidateMode: 'onChange' }}>
         <div>
           First name:
-          <Input type="text" name="firstName" />
+          <Input type="text" name="firstName" rules={{ required: 'reqiueerded' }} />
+        </div>
+        <div>
+          Mid name:
+          <ControlledInput type="text" name="midName" rules={{ required: 'reqiueerded' }} />
         </div>
         <div>
           Last name:
