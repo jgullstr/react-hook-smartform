@@ -4,7 +4,7 @@ import FormScopeContext from '../FormScopeContext';
 
 const withFieldController = (Component, emptyValue) => ({ name: fieldName, ...props }) => {
   const {
-    defaultValue: parentDefaultValue,
+    defaultValue: parentDefaultValue = {},
     getPath,
     getMetaData,
   } = useContext(FormScopeContext);
@@ -22,7 +22,7 @@ const withFieldController = (Component, emptyValue) => ({ name: fieldName, ...pr
     <Controller
       {...props}
       as={InjectedMetaComponent}
-      defaultValue={parentDefaultValue || emptyValue}
+      defaultValue={parentDefaultValue[fieldName] || emptyValue}
       name={name}
     />
   );
