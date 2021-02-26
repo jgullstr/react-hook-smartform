@@ -1,5 +1,5 @@
 import { Controller } from 'react-hook-form';
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useMemo, forwardRef } from 'react';
 import FormScopeContext from '../FormScopeContext';
 
 const withFieldController = (Component, emptyValue) => ({ name: fieldName, ...props }) => {
@@ -11,12 +11,13 @@ const withFieldController = (Component, emptyValue) => ({ name: fieldName, ...pr
 
   const name = getPath(fieldName);
 
-  const InjectedMetaComponent = useCallback(fieldProps => (
+  const InjectedMetaComponent = useMemo(() => forwardRef((fieldProps, ref) => (
     <Component
       {...fieldProps}
       meta={getMetaData(fieldProps.name)}
+      ref={ref}
     />
-  ), [getMetaData]);
+  )), [getMetaData]);
 
   return (
     <Controller
