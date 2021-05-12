@@ -4,7 +4,6 @@ import FormScopeContext from '../FormScopeContext';
 const useFormScope = name => {
   const {
     defaultValue: parentDefaultValue,
-    getMetaData,
     getPath,
   } = useContext(FormScopeContext);
 
@@ -13,7 +12,6 @@ const useFormScope = name => {
   return {
     name: path,
     defaultValue: (parentDefaultValue || {})[name],
-    ...getMetaData(path),
   };
 };
 

@@ -1,15 +1,26 @@
 import React from 'react';
-import { withFieldController } from 'react-hook-smartform';
+import { useScopedController } from 'react-hook-smartform';
 
-const Input = props => {
-  const { meta } = props;
+const Input = ({ name, rules, ...props }) => {
+  const { field, fieldState } = useScopedController({
+    name,
+    defaultValue: '',
+    rules,
+  });
+
+  const {
+    error,
+    isDirty,
+    isTouched,
+    invalid,
+  } = fieldState;
 
   return (
     <div>
-      <input {...props} />
-      {JSON.stringify(meta, null, 2)}
+      <input {...props} {...field} />
+      {JSON.stringify({ isDirty, isTouched, invalid, error: invalid && error.message }, null, 2)}
     </div>
   );
 };
 
-export default withFieldController(Input, '');
+export default Input;

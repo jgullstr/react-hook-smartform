@@ -6,7 +6,7 @@
   "dependencies": {
     "react": "file:../node_modules/react",
     "react-dom": "file:../node_modules/react-dom",
-    "react-hook-form": "^6.3.0",
+    "react-hook-form": "^7.5.2",
     "react-hook-smartform": "file:..",
     "react-scripts": "file:../node_modules/react-scripts"
   },
