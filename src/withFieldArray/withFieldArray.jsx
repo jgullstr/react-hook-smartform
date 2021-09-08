@@ -2,10 +2,10 @@ import React from 'react';
 import FieldArray from '../FieldArray';
 
 const withFieldArray = Component => props => {
-  const { name, flat } = props;
+  const { name } = props;
 
   return (
-    <FieldArray name={name} flat={flat}>
+    <FieldArray name={name}>
       <Component {...props} />
     </FieldArray>
   );

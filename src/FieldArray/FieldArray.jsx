@@ -8,7 +8,7 @@ import FormScopeContext from '../FormScopeContext';
 // @see https://github.com/react-hook-form/react-hook-form/issues/1344
 const KEY_NAME = Symbol('FieldArray row identifier');
 
-const FieldArrayProvider = ({ flat, children }) => {
+const FieldArrayProvider = ({ children }) => {
   const parentContext = useContext(FormScopeContext);
   const { path } = parentContext;
 
@@ -38,8 +38,8 @@ const FieldArrayProvider = ({ flat, children }) => {
     ...parentContext,
     // HACK: Resolve values for non-object fields.
     // @see https://github.com/react-hook-form/react-hook-form/issues/1344
-    defaultValue: flat ? fields.map(({ value }) => value) : fields,
-  }), [fields, flat, parentContext]);
+    defaultValue: fields,
+  }), [fields, parentContext]);
 
   return (
     <FormScopeContext.Provider value={scopeContext}>
@@ -50,9 +50,9 @@ const FieldArrayProvider = ({ flat, children }) => {
   );
 };
 
-const FieldArray = ({ name, children, flat }) => (
+const FieldArray = ({ name, children }) => (
   <FormScope name={name} type="array">
-    <FieldArrayProvider flat={flat}>
+    <FieldArrayProvider>
       {children}
     </FieldArrayProvider>
   </FormScope>
