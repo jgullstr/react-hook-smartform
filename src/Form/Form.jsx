@@ -12,6 +12,7 @@ const Form = ({
     defaultValues: defaultValue,
     autoReset: true,
     mode: 'onChange',
+    shouldUnregister: true,
     ...hookParams,
   });
   const extendedOnSubmit = (value, e) => onSubmit(value, e, methods);
