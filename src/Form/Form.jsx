@@ -11,6 +11,7 @@ const Form = ({
   const { Form: SmartForm, ...methods } = useSmartForm({
     defaultValues: defaultValue,
     autoReset: true,
+    mode: 'onChange',
     ...hookParams,
   });
   const extendedOnSubmit = (value, e) => onSubmit(value, e, methods);
