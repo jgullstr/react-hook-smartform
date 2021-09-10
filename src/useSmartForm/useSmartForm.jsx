@@ -18,15 +18,15 @@ const useSmartForm = ({ autoReset, defaultValues, ...params }) => {
     }
   }, [defaultValues, reset, autoReset]);
 
-  const Form = useCallback(({ children, ...props }) => (
-    <FormProvider {...methodsRef.current}>
+  const Form = useCallback(({ children, onSubmit, ...props }) => (
+    <FormProvider {...methodsRef.current} submit={onSubmit}>
       <FormScopeContext.Provider
         value={{
           defaultValue: defaultValues,
           getPath: x => x,
         }}
       >
-        <form {...props}>
+        <form {...props} onSubmit={onSubmit}>
           { children }
         </form>
       </FormScopeContext.Provider>
