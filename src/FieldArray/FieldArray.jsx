@@ -30,7 +30,7 @@ const FieldArrayProvider = ({ children }) => {
       ));
     };
 
-    return { ...methods, renderFields };
+    return { ...methods, renderFields, keyName: KEY_NAME };
   }, [methods, fields]);
 
   // Replace defaultValue with field values from useFieldArray.
