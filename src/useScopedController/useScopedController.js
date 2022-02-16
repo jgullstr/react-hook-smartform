@@ -11,7 +11,7 @@ const useScopedController = ({
   ...props
 }) => {
   const {
-    defaultValue: parentDefaultValue = emptyObject,
+    defaultValue: parentDefaultValue,
     getPath,
   } = useContext(FormScopeContext);
 
@@ -19,7 +19,9 @@ const useScopedController = ({
 
   // Form default value takes precedence over default value provided to field.
   // Controller defaultValue is required for fields to work as expected in field arrays.
-  const defaultValue = Object.prototype.hasOwnProperty.call(parentDefaultValue, fieldName)
+  const defaultValue = Object.prototype.hasOwnProperty.call(
+    parentDefaultValue || emptyObject, fieldName,
+  )
     ? parentDefaultValue[fieldName]
     : fieldDefaultValue;
 
