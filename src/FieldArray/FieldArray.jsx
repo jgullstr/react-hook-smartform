@@ -34,8 +34,9 @@ const FieldArrayProvider = ({ children }) => {
       ...methods,
       renderFields,
       keyName: KEY_NAME,
+      path,
     };
-  }, [methods, fields]);
+  }, [methods, fields, path]);
 
   // Replace defaultValue with field values from useFieldArray.
   const scopeContext = useMemo(() => ({
