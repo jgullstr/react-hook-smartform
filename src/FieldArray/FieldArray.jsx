@@ -8,13 +8,14 @@ import FormScopeContext from '../FormScopeContext';
 // @see https://github.com/react-hook-form/react-hook-form/issues/1344
 const KEY_NAME = Symbol('FieldArray row identifier');
 
-const FieldArrayProvider = ({ children }) => {
+const FieldArrayProvider = ({ children, ...params }) => {
   const parentContext = useContext(FormScopeContext);
   const { path } = parentContext;
 
   const methods = useFieldArray({
     name: path,
     keyName: KEY_NAME,
+    ...params,
   });
 
   const { fields } = methods;
@@ -55,9 +56,9 @@ const FieldArrayProvider = ({ children }) => {
   );
 };
 
-const FieldArray = ({ name, children }) => (
+const FieldArray = ({ name, children, ...params }) => (
   <FormScope name={name} type="array">
-    <FieldArrayProvider>
+    <FieldArrayProvider {...params}>
       {children}
     </FieldArrayProvider>
   </FormScope>
