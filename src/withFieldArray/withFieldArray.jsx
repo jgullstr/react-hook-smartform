@@ -1,7 +1,7 @@
 import React from 'react';
 import FieldArray from '../FieldArray';
 
-const withFieldArray = Component => (props, params = {}) => {
+const withFieldArray = (Component, params = {}) => props => {
   const { name } = props;
 
   return (
