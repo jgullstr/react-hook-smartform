@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Form, FormScope, Hidden, useFieldArrayScope, withFieldArray,
@@ -25,62 +25,58 @@ const Names = withFieldArray(() => {
 });
 
 const Addresses = withFieldArray(() => {
-  const { renderFields, append, remove } = useFieldArrayScope();
+  const {
+    renderFields,
+    append,
+    remove,
+    move,
+  } = useFieldArrayScope();
+
+  useEffect(() => {
+    console.log('mount addresses');
+    return () => console.log('unmount addresses');
+  });
 
   return (
     <div>
       Addresses:
-      {renderFields(index => (
+      {renderFields((index, last) => (
         <FormScope name={index}>
           <div>
             {`#${index + 1}`}
             <div>
-              Street:
+              Streets:
               <Input name="street" />
-            </div>
-            <div>
-              City:
-              <Input name="city" rules={{ required: 'CITY REQUIRED' }} />
-            </div>
-            <div>
-              Names:
-              <Names name="names" flat />
             </div>
             <button type="button" onClick={() => remove(index)}>
               Remove
             </button>
+            <button type="button" disabled={index === 0} onClick={() => move(index, index - 1)}>
+              Up
+            </button>
+            <button type="button" disabled={index === last} onClick={() => move(index, index + 1)}>
+              Down
+            </button>
           </div>
         </FormScope>
       ))}
-      <button type="button" onClick={() => append()}>Add row</button>
+      <button type="button" onClick={() => append({ street: '', city: '' })}>Add row</button>
     </div>
   );
 });
 
 const App = () => {
-  const [value, setValue] = useState({ id: 4 });
+  const [value, setValue] = useState({});
 
   return (
     <div>
-      <Form onSubmit={setValue} hookParams={{ reValidateMode: 'onChange' }}>
-        <Hidden name="id" unmountIfEmpty />
+      <Form
+        onSubmit={setValue}
+        hookParams={{ reValidateMode: 'onChange' }}
+        defaultValue={value}
+      >
         <div>
-          First name:
-          <Input type="text" name="firstName" rules={{ required: 'reqiueerded' }} />
-        </div>
-        <div>
-          Mid name:
-          <Input type="text" name="midName" rules={{ required: 'reqiueerded' }} />
-        </div>
-        <div>
-          Last name:
-          <Input type="text" name="lastName" />
-        </div>
-        <div>
-          Addresses:
-          <FormScope name="ards">
-            <Addresses name="addresses" />
-          </FormScope>
+          <Addresses name="ards1.addresses" />
         </div>
         <input type="submit" value="Submit" />
       </Form>
