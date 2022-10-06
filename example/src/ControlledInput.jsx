@@ -18,7 +18,13 @@ const Input = ({ name, rules, ...props }) => {
   return (
     <div>
       <input {...props} {...field} />
-      {JSON.stringify({ isDirty, isTouched, invalid, error: invalid && error.message }, null, 2)}
+      {JSON.stringify({
+        isDirty,
+        isTouched,
+        invalid,
+        error: invalid && error.message,
+        field,
+      }, null, 2)}
     </div>
   );
 };

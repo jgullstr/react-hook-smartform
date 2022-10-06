@@ -1,12 +1,8 @@
 const getScopedPath = (path, type = 'object') => name => {
-  switch (type) {
-    case 'object':
-      return `${path}.${name}`;
-    case 'array':
-      return `${path}[${name}]`;
-    default:
-      throw new TypeError(`Unknown composed field type: ${type}`);
+  if (type === 'object' && Number.isInteger(Number(name))) {
+    throw new TypeError(`${path}: Numeric field names are not supported`);
   }
-};
+  return `${path}.${name}`;
+}
 
 export default getScopedPath;
