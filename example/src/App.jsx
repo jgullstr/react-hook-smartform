@@ -65,8 +65,53 @@ const Addresses = withFieldArray(() => {
   );
 });
 
+const value1 = {
+  ards1: {
+    addresses: [
+      {
+        street: 'b',
+        city: '',
+      },
+      {
+        street: '',
+        city: '',
+      },
+      {
+        street: 'g',
+        city: '',
+      },
+    ],
+  },
+};
+
+const value2 = {
+  ards1: {
+    addresses: [
+      {
+        street: 'sfdadsf',
+      },
+      {
+        street: 'hfgfg',
+      },
+    ],
+  },
+};
+
+
+const Unmounter = () => {
+  useEffect(() => {
+    return () => {
+      console.log('form unmounted');
+    }
+  }, []);
+  return null;
+};
+
+
 const App = () => {
   const [value, setValue] = useState({});
+
+  const toggleValue = () => setValue(c => (c === value1 ? value2 : value1));
 
   return (
     <div>
@@ -75,6 +120,7 @@ const App = () => {
         hookParams={{ reValidateMode: 'onChange' }}
         defaultValue={value}
       >
+        <Unmounter />
         <div>
           <Addresses name="ards1.addresses" />
         </div>
@@ -84,6 +130,7 @@ const App = () => {
       <pre>
         {JSON.stringify(value, null, 2)}
       </pre>
+      <button type="button" onClick={toggleValue}>Toggle</button>
     </div>
   );
 };

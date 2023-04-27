@@ -8,8 +8,8 @@ const useSmartForm = ({ autoReset, defaultValues, ...params }) => {
   const methods = useForm(params);
   const { reset } = methods;
   const shouldReset = useRef(true);
-  const methodsRef = useRef();
-  methodsRef.current = methods;
+  const formDataRef = useRef();
+  formDataRef.current = { methods, defaultValues };
 
   useEffect(() => {
     if (shouldReset.current) {
@@ -18,20 +18,24 @@ const useSmartForm = ({ autoReset, defaultValues, ...params }) => {
     }
   }, [defaultValues, reset, autoReset]);
 
-  const Form = useCallback(({ children, onSubmit, ...props }) => (
-    <FormProvider {...methodsRef.current} submit={onSubmit}>
-      <FormScopeContext.Provider
-        value={{
-          defaultValue: defaultValues,
-          getPath: x => x,
-        }}
-      >
-        <form {...props} onSubmit={onSubmit}>
-          { children }
-        </form>
-      </FormScopeContext.Provider>
-    </FormProvider>
-  ), [defaultValues]);
+  const Form = useCallback(({ children, onSubmit, ...props }) => {
+    const { current: formData } = formDataRef;
+
+    return (
+      <FormProvider {...formData.methods} submit={onSubmit}>
+        <FormScopeContext.Provider
+          value={{
+            defaultValue: formData.defaultValues,
+            getPath: x => x,
+          }}
+        >
+          <form {...props} onSubmit={onSubmit}>
+            { children }
+          </form>
+        </FormScopeContext.Provider>
+      </FormProvider>
+    );
+  }, []);
 
   return useMemo(
     () => ({ ...methods, Form }),
