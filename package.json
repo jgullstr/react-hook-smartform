@@ -12,44 +12,33 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "microbundle-crl --no-compress --format modern,cjs",
-    "start": "microbundle-crl watch --no-compress --format modern,cjs",
-    "prepublish": "run-s build",
-    "test": "run-s test:unit test:lint test:build",
-    "test:build": "run-s build",
+    "build": "vite build",
+    "start": "vite build --watch",
+    "prepublish": "npm run build",
+    "test": "npm run test:unit && npm run test:lint && npm run test:build",
+    "test:build": "npm run build",
     "test:lint": "eslint .",
-    "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
-    "test:watch": "react-scripts test --env=jsdom",
-    "predeploy": "cd example && npm install && npm run build",
-    "deploy": "gh-pages -d example/build"
+    "test:unit": "vitest run",
+    "test:watch": "vitest",
+    "predeploy": "cd example && npm install && npm run build"
   },
   "peerDependencies": {
-    "react": "^17 || ^18",
-    "react-hook-form": "^7.5.2"
+    "react": "^17 || ^18 || ^19",
+    "react-hook-form": "^7.65.0"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.34.0",
-    "@typescript-eslint/parser": "^2.34.0",
-    "babel-eslint": "^10.0.3",
-    "cross-env": "^7.0.3",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb": "^18.2.1",
-    "eslint-config-react-app": "^5.2.0",
-    "eslint-plugin-flowtype": "^4.7.0",
-    "eslint-plugin-import": "^2.24.2",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-react": "^7.25.1",
-    "eslint-plugin-react-hooks": "^2.5.0",
-    "gh-pages": "^2.2.0",
-    "microbundle-crl": "^0.13.11",
-    "npm-run-all": "^4.1.5",
-    "postcss-flexbugs-fixes": "^5.0.2",
-    "postcss-normalize": "^10.0.1",
-    "postcss-preset-env": "^7.8.2",
-    "prettier": "^1.19.1",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
-    "react-scripts": "^5.0.1"
+    "@eslint/js": "^9.36.0",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react-swc": "^4.1.0",
+    "eslint": "^9.36.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.22",
+    "globals": "^16.4.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "vite": "^7.1.7",
+    "vite-plugin-eslint": "^1.8.1"
   },
   "files": [
     "dist"

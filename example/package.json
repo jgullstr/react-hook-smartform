@@ -4,33 +4,27 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "react": "file:../node_modules/react",
-    "react-dom": "file:../node_modules/react-dom",
-    "react-hook-form": "^7.15.1",
-    "react-hook-smartform": "file:..",
-    "react-scripts": "file:../node_modules/react-scripts"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.65.0",
+    "react-hook-smartform": "file:.."
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.24.0",
-    "@typescript-eslint/parser": "^2.24.0",
-    "babel-eslint": "^10.0.3",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb": "^18.1.0",
-    "eslint-config-react-app": "^5.2.0",
-    "eslint-plugin-flowtype": "^4.6.0",
-    "eslint-plugin-import": "^2.24.2",
-    "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-react": "^7.25.1",
-    "eslint-plugin-react-hooks": "^2.5.0",
-    "postcss-flexbugs-fixes": "^5.0.2",
-    "postcss-normalize": "^10.0.1",
-    "postcss-preset-env": "^7.8.2"
+    "@eslint/js": "^9.36.0",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react-swc": "^4.1.0",
+    "eslint": "^9.36.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.22",
+    "globals": "^16.4.0",
+    "vite": "^7.1.7",
+    "vite-plugin-eslint": "^1.8.1"
   },
   "scripts": {
-    "start": "node ../node_modules/react-scripts/bin/react-scripts.js start",
-    "build": "node ../node_modules/react-scripts/bin/react-scripts.js build",
-    "test": "node ../node_modules/react-scripts/bin/react-scripts.js test",
-    "eject": "node ../node_modules/react-scripts/bin/react-scripts.js eject"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "eslintConfig": {
     "extends": "react-app"
