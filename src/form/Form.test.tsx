@@ -155,6 +155,20 @@ describe('Form', () => {
     expect(screen.getByLabelText('Name')).toHaveValue('Ada')
   })
 
+  it('submits the values it was given without the user touching them', async () => {
+    const onSubmit = vi.fn<SmartFormSubmitHandler<Client>>()
+    render(
+      <Form<Client> values={{ name: 'Ada', email: 'ada@example.com', is_company: false }} onSubmit={onSubmit}>
+        <Input name="name" label="Name" />
+        <Input name="email" label="Email" />
+        <SubmitButton />
+      </Form>,
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    expect(onSubmit.mock.calls[0]![0]).toEqual({ name: 'Ada', email: 'ada@example.com' })
+  })
+
   it('lets onSubmit report server errors through the methods', async () => {
     render(
       <Form<Client>

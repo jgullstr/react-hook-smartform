@@ -11,7 +11,7 @@ export default defineConfig({
       { extends: true, test: { name: 'react-hook-form@latest' } },
       {
         extends: true,
-        test: { name: 'react-hook-form@7.70', env: { SMARTFORM_RHF_FLOOR: '7.70.0' } },
+        test: { name: 'react-hook-form@7.77', env: { SMARTFORM_RHF_FLOOR: '7.77.0' } },
         resolve: { alias: { 'react-hook-form': 'react-hook-form-floor' } },
       },
     ],

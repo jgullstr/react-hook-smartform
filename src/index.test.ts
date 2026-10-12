@@ -32,6 +32,6 @@ describe('test matrix', () => {
     const floor = process.env.SMARTFORM_RHF_FLOOR
     // The floor project names its exact version; the latest project must not be on the floor.
     expect(version).toBe(floor ?? version)
-    expect(version === '7.70.0').toBe(floor !== undefined)
+    expect(version === '7.77.0').toBe(floor !== undefined)
   })
 })
