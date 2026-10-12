@@ -50,8 +50,9 @@ export function useSmartForm<
         const submit = useCallback(
           (event?: BaseSyntheticEvent) => {
             // A form shown through a portal is still a React descendant of whatever it was opened
-            // from; without this a dialog's submit would also submit the page's form.
-            event?.stopPropagation()
+            // from; without this a dialog's submit would also submit the page's form. A click handed in
+            // by a button keeps bubbling.
+            if (event?.type === 'submit') event.stopPropagation()
             return onSubmit(event)
           },
           [onSubmit],

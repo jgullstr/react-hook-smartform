@@ -15,9 +15,9 @@ export interface UseScopedControllerProps<TValue> {
   defaultValue?: TValue
   /**
    * What `field.value` reports while the form holds no value and no default applies: a display
-   * fallback that keeps the input controlled without registering or submitting anything. Only a
-   * field without `defaultValue` (and without a form default) ever shows it, because
-   * react-hook-form falls back to a default whenever one exists. Defaults to `defaultValue`.
+   * fallback that keeps the input controlled; the field is still registered and submits
+   * `undefined`. Only a field without `defaultValue` (and without a form default) ever shows it,
+   * because react-hook-form falls back to a default whenever one exists. Defaults to `defaultValue`.
    */
   emptyValue?: TValue
   rules?: UseControllerProps<FieldValues, string>['rules']

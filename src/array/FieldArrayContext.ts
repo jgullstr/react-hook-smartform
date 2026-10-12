@@ -11,7 +11,7 @@ export interface FieldArrayContextValue<TRow = unknown> {
   /** Full path of the array. */
   readonly path: string
   readonly keyName: FieldArrayKey
-  /** A snapshot per row, for keys and counts. Read live values through fields, not from here. */
+  /** A snapshot per row, for keys and counts. Read live values through field components or `useWatch`, not from here. */
   readonly fields: ReadonlyArray<FieldArrayRow<TRow>>
   append(value: TRow | TRow[], options?: FieldArrayMethodProps): void
   prepend(value: TRow | TRow[], options?: FieldArrayMethodProps): void

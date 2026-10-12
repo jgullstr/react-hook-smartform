@@ -169,6 +169,33 @@ describe('Form', () => {
     expect(onSubmit.mock.calls[0]![0]).toEqual({ name: 'Ada', email: 'ada@example.com' })
   })
 
+  it('shows but does not submit a value that the new values no longer hold', async () => {
+    // react-hook-form keeps the value a mounted field started with on screen; on the values
+    // path the submission follows the new values. reset() differs: it submits the old value too.
+    const onSubmit = vi.fn<SmartFormSubmitHandler<Client>>()
+    function Host() {
+      const [client, setClient] = useState<Partial<Client>>({ name: 'Ada', company: 'ACME' })
+      return (
+        <>
+          <Form<Client> values={client as Client} onSubmit={onSubmit}>
+            <Input name="name" label="Name" />
+            <Input name="company" label="Company" />
+            <SubmitButton />
+          </Form>
+          <button type="button" onClick={() => setClient({ name: 'Grace' })}>
+            Load Grace
+          </button>
+        </>
+      )
+    }
+    render(<Host />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Load Grace' }))
+    expect(screen.getByLabelText('Company')).toHaveValue('ACME')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    expect(onSubmit.mock.calls[0]![0]).toEqual({ name: 'Grace' })
+  })
+
   it('lets onSubmit report server errors through the methods', async () => {
     render(
       <Form<Client>

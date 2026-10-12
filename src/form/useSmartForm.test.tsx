@@ -128,6 +128,35 @@ describe('useSmartForm', () => {
     expect(onSubmit).toHaveBeenCalledWith({ name: 'Ada' }, undefined)
   })
 
+  it('lets a click that triggers a submit keep bubbling', async () => {
+    const outerClick = vi.fn<() => void>()
+    const onSubmit = vi.fn<(values: unknown) => void>()
+    function SaveButton() {
+      const submit = useSmartFormSubmit()
+      return (
+        <button type="button" onClick={submit}>
+          Save
+        </button>
+      )
+    }
+    function Host() {
+      const { Form, handleSubmit } = useSmartForm<{ name: string }>({ defaultValues: { name: 'Ada' } })
+      return (
+        <div onClick={outerClick}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <Field name="name" />
+            <SaveButton />
+          </Form>
+        </div>
+      )
+    }
+    render(<Host />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    expect(onSubmit).toHaveBeenCalledWith({ name: 'Ada' }, expect.objectContaining({ type: 'click' }))
+    expect(outerClick).toHaveBeenCalledTimes(1)
+  })
+
   it('does not let a submit bubble to a form the portal target sits in', async () => {
     const outer = vi.fn<(e: React.FormEvent) => void>((e) => e.preventDefault())
     const inner = vi.fn<(values: unknown) => void>()
