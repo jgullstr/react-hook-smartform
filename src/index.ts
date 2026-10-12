@@ -22,3 +22,13 @@ export {
   type UseSmartFormProps,
   type UseSmartFormReturn,
 } from './form/useSmartForm'
+export { FieldArray, type FieldArrayProps } from './array/FieldArray'
+export {
+  FIELD_ARRAY_KEY,
+  FieldArrayContext,
+  useFieldArrayScope,
+  type FieldArrayContextValue,
+  type FieldArrayKey,
+  type FieldArrayRow,
+} from './array/FieldArrayContext'
+export { withFieldArray } from './array/withFieldArray'
