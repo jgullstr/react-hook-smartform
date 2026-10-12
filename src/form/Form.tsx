@@ -32,6 +32,8 @@ function splitProps<TFieldValues extends FieldValues, TContext, TTransformedValu
   const useFormProps: Record<string, unknown> = {}
   const elementProps: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(props)) {
+    // A caller forwarding an optional prop as undefined must not erase the defaults below.
+    if (value === undefined) continue
     ;(isUseFormPropKey(key) ? useFormProps : elementProps)[key] = value
   }
   return [

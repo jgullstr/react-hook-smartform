@@ -210,20 +210,54 @@ describe('Form', () => {
   })
 
   it('hands the same submit function to descendants on every render', async () => {
-    const seen = new Set<unknown>()
+    // One entry per Probe render: the submit function it was handed.
+    const seen: unknown[] = []
     function Probe() {
-      seen.add(useSmartFormSubmit())
+      seen.push(useSmartFormSubmit())
       return null
     }
+    function Host() {
+      const [count, setCount] = useState(0)
+      return (
+        <>
+          {/* A new inline onSubmit every render, as callers write it. */}
+          <Form onSubmit={() => count}>
+            <Probe />
+          </Form>
+          <button type="button" onClick={() => setCount((n) => n + 1)}>
+            Rerender
+          </button>
+        </>
+      )
+    }
+    render(<Host />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Rerender' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Rerender' }))
+
+    expect(seen.length).toBeGreaterThan(1)
+    expect(new Set(seen).size).toBe(1)
+  })
+
+  it('keeps its defaults when a caller passes undefined for them', async () => {
+    const onSubmit = vi.fn<SmartFormSubmitHandler<Client>>()
     render(
-      <Form onSubmit={() => {}}>
+      <Form<Client> defaultValues={{ name: 'Ada', company: 'ACME' }} onSubmit={onSubmit} mode={undefined} shouldUnregister={undefined}>
         <Input name="name" label="Name" />
-        <Probe />
+        <Input name="email" label="Email" rules={{ required: 'Required' }} />
+        <SubmitButton />
       </Form>,
     )
 
-    await userEvent.type(screen.getByLabelText('Name'), 'Ada')
-    expect(seen.size).toBe(1)
+    // mode still onChange: the error appears without a submit.
+    await userEvent.type(screen.getByLabelText('Email'), 'a')
+    await userEvent.clear(screen.getByLabelText('Email'))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Required')
+
+    // shouldUnregister still on: company is not on screen, so it is not submitted.
+    await userEvent.type(screen.getByLabelText('Email'), 'ada@example.com')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    expect(onSubmit.mock.calls[0]![0]).toEqual({ name: 'Ada', email: 'ada@example.com' })
   })
 
   it('calls the latest onSubmit even though the submit function is stable', async () => {
