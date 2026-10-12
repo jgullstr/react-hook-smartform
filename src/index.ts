@@ -32,3 +32,4 @@ export {
   type FieldArrayRow,
 } from './array/FieldArrayContext'
 export { withFieldArray } from './array/withFieldArray'
+export { Hidden, type HiddenProps } from './hidden/Hidden'
