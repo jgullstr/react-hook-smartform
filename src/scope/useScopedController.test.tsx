@@ -87,10 +87,13 @@ describe('useScopedController', () => {
     expect(warn).not.toHaveBeenCalled()
   })
 
-  it('keeps the field default across a reset to data without the field', async () => {
-    // react-hook-form re-registers a mounted field with its own default after reset().
+  it('shows the value it mounted with after a reset to data without the field', async () => {
+    // react-hook-form keeps the default a mounted field was registered with, so a reset to data
+    // that lacks the field leaves the previous record's value in place, in the submission too.
+    // Callers avoid the carry-over by giving every field a value or by keying the form by record.
+    const onSubmit = vi.fn<(values: unknown) => void>()
     render(
-      <TestForm defaultValues={{ name: 'Ada' }}>
+      <TestForm onSubmit={onSubmit} defaultValues={{ name: 'Ada' }}>
         <Input name="name" label="Name" />
       </TestForm>,
     )
@@ -98,6 +101,9 @@ describe('useScopedController', () => {
     await userEvent.type(screen.getByLabelText('Name'), ' Lovelace')
     await userEvent.click(screen.getByRole('button', { name: 'Load other' }))
     expect(screen.getByLabelText('Name')).toHaveValue('Ada')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    expect(onSubmit).toHaveBeenCalledWith({ name: 'Ada' })
   })
 
   it('shows emptyValue for a field without a default, without submitting it', async () => {
