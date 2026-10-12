@@ -27,6 +27,8 @@ function TextField({ name, label, rules }: TextFieldProps) {
         {label}
         <input
           {...field}
+          // Loaded data can hold null, which emptyValue does not replace, and an input needs a string.
+          value={field.value ?? ''}
           aria-invalid={fieldState.invalid || undefined}
           aria-describedby={fieldState.error ? errorId : undefined}
         />

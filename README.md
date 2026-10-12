@@ -35,7 +35,7 @@ Three ideas make that possible.
 
 - **Fields register themselves.** A field component calls `useScopedController` and finds its form through React context. You pass no `control` and write no render prop.
 - **Names are relative.** Inside `<FormScope name="address">`, a field named `street` registers as `address.street`. A group of fields can then be reused under any key, or as the rows of an array.
-- **Unmounted fields leave the submission.** `<Form>` turns react-hook-form's `shouldUnregister` on, so a field that is not on screen is not submitted. The submission holds what the user could see.
+- **Unmounted fields leave the submission.** `<Form>` turns react-hook-form's `shouldUnregister` on, so a field that is not on screen is not submitted. The submission holds what is mounted.
 
 ## Install
 
@@ -80,6 +80,8 @@ function TextField({ name, label, rules }: TextFieldProps) {
         {label}
         <input
           {...field}
+          // Loaded data can hold null, which emptyValue does not replace, and an input needs a string.
+          value={field.value ?? ''}
           aria-invalid={fieldState.invalid || undefined}
           aria-describedby={fieldState.error ? errorId : undefined}
         />
@@ -131,6 +133,8 @@ function TextField({ name, label, rules }: TextFieldProps) {
         {label}
         <input
           {...field}
+          // Loaded data can hold null, which emptyValue does not replace, and an input needs a string.
+          value={field.value ?? ''}
           aria-invalid={fieldState.invalid || undefined}
           aria-describedby={fieldState.error ? errorId : undefined}
         />
@@ -196,8 +200,9 @@ function TextField({ name, label }: { name: FieldName; label: string }) {
 ### Defaults and `emptyValue`
 
 - `defaultValue` applies when the form's `values` or `defaultValues` hold nothing for the field. The form's value wins, as in react-hook-form.
-- react-hook-form falls back to a default whenever one exists. So `field.value` is `undefined` only in three cases: the field has no default anywhere, someone called `setValue(name, undefined)` on a field without a default, or the field sits in an array row that was appended without its key.
-- `emptyValue` is what `field.value` reports in those cases. It keeps the input controlled. It is a display fallback only: it is not registered and not submitted. It defaults to `defaultValue`.
+- react-hook-form falls back to a default whenever one exists. So `field.value` is `undefined` only for a field without a default, neither `defaultValue` nor a form default, in three cases: the data never held a value for it, someone called `setValue(name, undefined)` on it, or it sits in an array row that was appended without its key.
+- `emptyValue` is what `field.value` reports in those cases. It keeps the input controlled. It is a display fallback only: the field is still registered, and it is submitted with the value `undefined`. It defaults to `defaultValue`.
+- `null` is a value, not empty. `emptyValue` does not replace it, so guard nullable data in the field component, as `TextField` does with `field.value ?? ''`.
 - Give `defaultValue` or `emptyValue` and `field.value` has the type you gave, without `undefined`. Give neither and it is `TValue | undefined`.
 
 ## Scopes
@@ -345,7 +350,7 @@ function ContactForm({ contact, save }: { contact: Contact; save: SmartFormSubmi
 - `renderFields((index, lastIndex) => …)` renders one node per row, keyed for React. `lastIndex` is `fields.length - 1`.
 - Rows of objects wrap their fields in `<FormScope name={index}>`. Rows of plain values pass the index straight to the field: `name={index}`. react-hook-form documents flat arrays as unsupported for `useFieldArray`. This package's tests cover them on both supported react-hook-form versions.
 - Arrays nest. A `<FieldArray name="phones">` inside a row scope edits the `phones` array of that row.
-- `fields` are snapshots: each entry is the row as it was when the array last changed, plus a `smartformKey` string (`FIELD_ARRAY_KEY`) for React keys. The key appears on `fields` entries only, never in the values. Read live values through field components or `useWatch`.
+- `fields` are snapshots, taken when the array last changed. Each entry has a `smartformKey` string (`FIELD_ARRAY_KEY`) for React keys. An entry for a row of objects also holds the row as it was. An entry for a row of plain values carries only the key. The key appears on `fields` entries only, never in the values. Read live values through field components or `useWatch`.
 - Do not change `name` while the array is mounted. To point the array elsewhere, remount it with a `key`.
 - With `values` and `shouldUnregister` on, an array that has no rows is left out of the submission: no mounted field holds it. Treat a missing array as empty when you read the submission, or load the form with `defaultValues`.
 
@@ -414,7 +419,7 @@ function ToolbarSave() {
 - When `onSubmit` returns a promise, `formState.isSubmitting` stays `true` until the promise settles. The save button above is disabled for that time.
 - A message set with `setError` shows in the field's error element. react-hook-form removes it when the field passes validation again.
 - If the promise rejects, the rejection escapes the form's submit handler as an unhandled rejection, as in react-hook-form. Handle errors inside `onSubmit`, for example with `setError('root', { message })`.
-- `useSmartFormSubmit()` returns the form's submit handler. Call it with no arguments, `onClick={() => submit()}`. Do not pass it the click event.
+- `useSmartFormSubmit()` returns the form's submit handler. Call it with no arguments, `onClick={() => submit()}`. A click event handed in becomes `onSubmit`'s `event`.
 - A submit never bubbles to an enclosing form. A dialog rendered through a portal is still a React child of the page that opened it. Without this, submitting the dialog's form would also submit the page's form. With it, a dialog form inside a page form is safe.
 
 ## Loading and resetting
@@ -429,7 +434,8 @@ function ToolbarSave() {
 - `values` is compared deeply. A re-created but equal object does not reset what the user typed. A changed object resets the form to it.
 - `defaultValues` alone does not follow changes. Call `reset(next)`, or remount the form with a `key`.
 - `reset` comes from `useSmartForm()`, from the `methods` argument of `onSubmit`, or from react-hook-form's `useFormContext()` inside the form. `reset({})` means "reset to the defaults" in react-hook-form, not "empty every field".
-- After a `reset()` or a `values` change to data that lacks a mounted field, react-hook-form keeps the value that field mounted with. The old value stays on screen and is submitted. Two remedies: give every field a value in the data, even an empty one such as `''` or `null`, rather than leaving its key out; or key the form by record so it remounts: `<Form key={client.id} values={client} onSubmit={save}>`.
+- After a `reset()` to data that lacks a mounted field, react-hook-form keeps the value that field mounted with. The old value stays on screen and is submitted.
+- After a `values` change to data that lacks a mounted field, the old value also stays on screen, but it is not submitted. The submission follows the new data, so it no longer matches the screen. For both cases, two remedies: give every field a value in the data, even an empty one such as `''` or `null`, rather than leaving its key out; or key the form by record so it remounts: `<Form key={client.id} values={client} onSubmit={save}>`.
 
 `<Form>` turns `shouldUnregister` on. A value is in the submission only while a field for it is mounted. Hiding a section removes its values. A key in `values` or `defaultValues` that no field shows is not submitted either; keep such a value, an id for example, with `<Hidden>`. Pass `shouldUnregister={false}` to turn this off. The submission is then the loaded data with the user's changes, including keys that no field shows.
 
@@ -627,9 +633,9 @@ interface UseScopedControllerProps<TValue> {
   defaultValue?: TValue;
   /**
    * What `field.value` reports while the form holds no value and no default applies: a display
-   * fallback that keeps the input controlled without registering or submitting anything. Only a
-   * field without `defaultValue` (and without a form default) ever shows it, because
-   * react-hook-form falls back to a default whenever one exists. Defaults to `defaultValue`.
+   * fallback that keeps the input controlled; the field is still registered and submits
+   * `undefined`. Only a field without `defaultValue` (and without a form default) ever shows it,
+   * because react-hook-form falls back to a default whenever one exists. Defaults to `defaultValue`.
    */
   emptyValue?: TValue;
   rules?: UseControllerProps<FieldValues, string>['rules'];
@@ -662,7 +668,7 @@ export declare function useScopedController<TValue = unknown>(props: UseScopedCo
 |---|---|---|
 | `name` | `FieldName` | Relative to the enclosing scope. Required. |
 | `defaultValue` | `TValue` | Used when the form holds no default for the field. |
-| `emptyValue` | `TValue` | What `field.value` reports while the field has no value and no default. Not submitted. Defaults to `defaultValue`. |
+| `emptyValue` | `TValue` | What `field.value` reports while the field has no value and no default. Display only: the field still submits `undefined`. Defaults to `defaultValue`. |
 | `rules` | react-hook-form rules | Validation, as `useController` takes it. |
 | `disabled` | `boolean` | As in `useController`. |
 | `shouldUnregister` | `boolean` | Overrides the form's setting for this field. |
@@ -710,7 +716,7 @@ interface FieldArrayContextValue<TRow = unknown> {
   /** Full path of the array. */
   readonly path: string;
   readonly keyName: FieldArrayKey;
-  /** A snapshot per row, for keys and counts. Read live values through fields, not from here. */
+  /** A snapshot per row, for keys and counts. Read live values through field components or `useWatch`, not from here. */
   readonly fields: ReadonlyArray<FieldArrayRow<TRow>>;
   append(value: TRow | TRow[], options?: FieldArrayMethodProps): void;
   prepend(value: TRow | TRow[], options?: FieldArrayMethodProps): void;
@@ -824,6 +830,9 @@ Field names are not checked against the value type. They are strings relative to
 | `useFormScope(name).name` | `useFormScope().getPath(name)` |
 | `useFormScope(name).defaultValue` | gone — react-hook-form reads defaults by path; use `useWatch` or `formState.defaultValues` |
 | `useScopedController({ defaultValue: '', emptyValue: '' })` | `emptyValue` defaults to `defaultValue`; both default to `undefined` (7.x: `''`) |
+| `useScopedController` registered every field with `defaultValue: ''` | no default unless you give one; a field with neither `defaultValue` nor a form default is registered and submitted with the value `undefined` |
+| `<Hidden unmountIfEmpty>` unmounted on any falsy value | unmounts only for `undefined`, `null` and `''`; `0` and `false` stay |
+| `Hidden` always set `shouldUnregister` on its controller | follows the form's setting: `<Form>` turns it on, `useSmartForm` does not |
 | `FieldArray` row key `Symbol()` | `smartformKey` (`FIELD_ARRAY_KEY`) |
 | `FormScopeContext` value `{ defaultValue, type, getPath, path }` | `{ path, type, getPath }` |
 | CommonJS build | ESM only |
