@@ -7,6 +7,12 @@ export {
   type FormScopeContextValue,
   type FormScopeType,
 } from './scope/FormScopeContext'
+export {
+  useScopedController,
+  type ScopedField,
+  type UseScopedControllerProps,
+  type UseScopedControllerReturn,
+} from './scope/useScopedController'
 export { SubmitContext, useSmartFormSubmit, type SmartFormSubmit } from './form/SubmitContext'
 export {
   useSmartForm,
