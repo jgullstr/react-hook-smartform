@@ -14,6 +14,7 @@ export {
   type UseScopedControllerReturn,
 } from './scope/useScopedController'
 export { SubmitContext, useSmartFormSubmit, type SmartFormSubmit } from './form/SubmitContext'
+export { Form, type FormProps, type SmartFormSubmitHandler } from './form/Form'
 export {
   useSmartForm,
   type SmartFormElement,
